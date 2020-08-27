@@ -13,7 +13,6 @@ class TasksController < ApplicationController
 
   def create
      @task = Task.new(task_params)
-
     if @task.save
       flash[:success] = 'タスクが投稿されました'
       redirect_to @task
@@ -46,4 +45,10 @@ class TasksController < ApplicationController
   flash[:success] = 'タスクが削除されました'
   redirect_to tasks_path
   end
+  private
+
+def task_params
+  params.require(:task).permit(:content)
 end
+end
+
