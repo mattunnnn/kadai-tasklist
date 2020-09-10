@@ -1,28 +1,58 @@
-class MicropostsController < ApplicationController
+class TasksController < ApplicationController
   before_action :require_user_logged_in
   before_action :correct_user, only: [:destroy]
+  before_action :set_task, only: [:show, :edit, :update, :destroy]
+  
+  def index
+    @tasks = Task.all
+  end
+
+  def show
+    @task = Task.find(params[:id])
+  end
+
+  def new
+     @task = Task.new
+  end
 
   def create
     @task = current_user.tasks.build(task_params)
     if @task.save
-      flash[:success] = 'メッセージを投稿しました。'
-      redirect_to root_url
+      flash[:success] = 'タスクを投稿しました。'
+      redirect_to @task
     else
       @tasks = current_user.tasks.order(id: :desc).page(params[:page])
-      flash.now[:danger] = 'メッセージの投稿に失敗しました。'
-      render 'tasks/index'
+      flash.now[:danger] = 'タスクの投稿に失敗しました。'
+      render :new
     end
   end
+  def edit
+    @task = Task.find(params[:id])
+  end
+   def update
+  if @task.update(task_params)
+    flash[:success] = 'タスクが編集されました'
+    redirect_to @task
+    else
+    flash.now[:danger] = 'タスクが編集されませんでした'
+    render :new
+  end
+   end
+
 
   def destroy
     @task.destroy
-    flash[:success] = 'メッセージを削除しました。'
+    flash[:success] = 'タスクを削除しました。'
     redirect_back(fallback_location: root_path)
   end
 
   private
-
-  def task_params
-    params.require(:task).permit(:content)
+  
+  def set_task
+    @task = Task.find(params[:id])
   end
+
+def task_params
+  params.require(:task).permit(:content, :status)
+end
 end
