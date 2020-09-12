@@ -9,7 +9,7 @@ before_action :require_user_logged_in
 
     if @user.save
       flash[:success] = 'ユーザーを登録しました。'
-      redirect_to @user
+      redirect_to @task
     else
       flash.now[:danger] = 'ユーザーの登録に失敗しました。'
       render :new
