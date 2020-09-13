@@ -43,7 +43,7 @@ class TasksController < ApplicationController
   def destroy
     @task.destroy
     flash[:success] = 'タスクを削除しました。'
-    redirect_back(fallback_location: root_path)
+    redirect_to @task
   end
 
   private
@@ -52,7 +52,14 @@ class TasksController < ApplicationController
     @task = Task.find(params[:id])
   end
 
-def task_params
+  def task_params
   params.require(:task).permit(:content, :status)
-end
+  end
+  
+  def correct_user
+    @task = current_user.tasks.find_by(id: params[:id])
+    unless @task
+      redirect_to @task
+    end
+  end
 end
